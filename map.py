@@ -1,31 +1,4 @@
-import pygame
-from enum import Enum
-
-class MapTileType(Enum):
-    GRASS = 1,
-    WATER = 2
-
-
-class MapTile:
-    def __init__(self, idx_x, idx_y, display):
-        self.idx_x = idx_x
-        self.idx_y = idx_y
-        self.display = display
-        self.is_solid = False
-        self.is_destroyable = False
-        self.SIZE_X = 50
-        self.SIZE_Y = 50
-        self.pos_x = idx_x * self.SIZE_X
-        self.pos_y = idx_y * self.SIZE_Y
-        self.type = MapTileType.GRASS
-
-    def draw(self):
-        tile_color = {
-            MapTileType.GRASS: (0, 255, 0),
-            MapTileType.WATER: (0, 0, 255)
-        }
-        pygame.draw.rect(self.display, tile_color.get(self.type), (self.pos_x, self.pos_y, self.SIZE_X, self.SIZE_Y))
-        pass
+import mapTile
 
 
 class Map:
@@ -38,18 +11,29 @@ class Map:
 
     def generate(self):
         self.tiles = []
+
         for i in range(0, self.width):
             for j in range(0, self.height):
-                self.tiles.append(MapTile(i, j, self.display))
+                self.tiles.append(mapTile.MapTileFactory.construct_grass_tile(i, j, self.display))
         pass
 
-    def generate_using_map(self, width, height, mapArr):
+    def generate_using_map(self, map_arr):
         self.tiles = []
-        self.width = width
-        self.height = height
-        for i in range(0, len(mapArr)):
-            pass
+        x = 0
+        y = 0
+        for i in map_arr:
+            for j in i:
+                self.tiles.append(mapTile.MapTileFactory.construct_tile(j, x, y, self.display))
+                x += 1
+            y += 1
+            x = 0
 
     def draw(self):
         for i in range(0, len(self.tiles)):
             self.tiles[i].draw()
+
+    def is_tile_passable(self, tile_x, tile_y):
+        for tile in self.tiles:
+            if tile.idx_x == tile_x and tile.idx_y == tile_y:
+                return tile.is_passable
+        return False
