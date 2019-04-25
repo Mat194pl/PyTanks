@@ -2,12 +2,14 @@ import mapTile
 
 
 class Map:
-    def __init__(self, display):
+    def __init__(self, display, tile_size):
         self.tiles = []
         self.width = 10
         self.height = 10
         self.display = display
-        pass
+        self.tile_size = tile_size
+        self.width_px = self.width * self.tile_size
+        self.height_px = self.height * self.tile_size
 
     def generate(self):
         self.tiles = []
@@ -21,12 +23,22 @@ class Map:
         self.tiles = []
         x = 0
         y = 0
+        width = 0
+        height = 0
         for i in map_arr:
             for j in i:
                 self.tiles.append(mapTile.MapTileFactory.construct_tile(j, x, y, self.display))
                 x += 1
+                if x > width:
+                    width = x
             y += 1
             x = 0
+            if y > height:
+                height = y
+        self.width = width
+        self.height = height
+        self.width_px = self.width * self.tile_size
+        self.height_px = self.height * self.tile_size
 
     def draw(self):
         for i in range(0, len(self.tiles)):
