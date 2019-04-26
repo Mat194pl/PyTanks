@@ -6,6 +6,7 @@ class MapTileType(Enum):
     GRASS = 1
     WATER = 2
 
+
 class MapTile:
     def __init__(self, idx_x, idx_y, display):
         self.idx_x = idx_x
