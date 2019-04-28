@@ -5,7 +5,7 @@ from tank import MoveDirection
 from tank import TankDirection
 from bulletsManager import BulletsManager
 from bullet import BulletDirection
-from tankLogic import TankLogic
+from tankLogic import *
 
 GAME_FPS = 60
 
@@ -20,10 +20,13 @@ testMap = [
     [1, 1, 1, 1, 1, 1, 1, 1],
     [1, 2, 2, 1, 1, 2, 2, 1],
     [1, 2, 2, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 2, 1, 1],
-    [1, 1, 1, 2, 2, 2, 2, 1],
+    [1, 1, 1, 1, 1, 3, 1, 1],
+    [1, 1, 1, 3, 3, 3, 3, 1],
     [1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 2, 1, 2, 1, 1],
+    [2, 1, 1, 2, 2, 2, 1, 1],
+    [2, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 2, 1, 1, 1, 1],
     [1, 1, 1, 2, 2, 2, 1, 1],
 ]
 
@@ -31,11 +34,13 @@ gameMap = Map(display, 50)
 gameMap.generate_using_map(testMap)
 
 bullets_manager = BulletsManager(display, gameMap)
-bullets_manager.fire_bullet(40, 40, BulletDirection.DOWN)
 
+tank_group = TankGroupManager(display, gameMap, bullets_manager)
+tank_group.generate_tank()
+tank_group.generate_tank()
+tank_group.generate_tank()
 tank = Tank(display, 50, bullets_manager)
-tank.set_tile_pos(5, 5)
-tankTestLogic = TankLogic(tank, gameMap)
+tank.set_tile_pos(2, 10)
 
 while running:
     for event in pygame.event.get():
@@ -66,17 +71,16 @@ while running:
             if event.key == pygame.K_SPACE:
                 tank.fire_bullet()
 
-    tankTestLogic.update(1 / GAME_FPS)
-    tank.update(1 / GAME_FPS)
+    tank_group.update(1 / GAME_FPS)
     bullets_manager.update(1 / GAME_FPS)
-
     pygame.display.update()
+    tank.update(1 / GAME_FPS)
 
     # Draw things
     gameMap.draw()
-    tank.draw()
+    tank_group.draw()
     bullets_manager.draw()
-
+    tank.draw()
     clock.tick(GAME_FPS)
 
 pygame.quit()

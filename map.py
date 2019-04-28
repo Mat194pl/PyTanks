@@ -49,3 +49,9 @@ class Map:
             if tile.idx_x == tile_x and tile.idx_y == tile_y:
                 return tile.is_passable
         return False
+
+    def get_tile(self, tile_x, tile_y):
+        for tile in self.tiles:
+            if tile.idx_x == tile_x and tile.idx_y == tile_y:
+                return tile
+        return None

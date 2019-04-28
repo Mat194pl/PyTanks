@@ -5,6 +5,7 @@ import pygame
 class MapTileType(Enum):
     GRASS = 1
     WATER = 2
+    WALL = 3
 
 
 class MapTile:
@@ -15,6 +16,7 @@ class MapTile:
         self.is_solid = False
         self.is_destroyable = False
         self.is_passable = False
+        self.is_bullet_passable = False
         self.SIZE_X = 50
         self.SIZE_Y = 50
         self.pos_x = idx_x * self.SIZE_X
@@ -33,7 +35,8 @@ class MapTileFactory:
     def construct_tile(tile_type, idx_x, idx_y, display):
         tile_types = {
             MapTileType.GRASS: MapTileFactory.construct_grass_tile,
-            MapTileType.WATER: MapTileFactory.construct_water_tile
+            MapTileType.WATER: MapTileFactory.construct_water_tile,
+            MapTileType.WALL: MapTileFactory.construct_wall_tile
         }
 
         type = MapTileType(tile_type)
@@ -48,11 +51,16 @@ class MapTileFactory:
     def construct_water_tile(idx_x, idx_y, display):
         return WaterMapTile(idx_x, idx_y, display)
 
+    @staticmethod
+    def construct_wall_tile(idx_x, idx_y, display):
+        return WallMapTile(idx_x, idx_y, display)
+
 
 class GrassMapTile(MapTile):
     def __init__(self, idx_x, idx_y, display):
         super().__init__(idx_x, idx_y, display)
         self.is_passable = True
+        self.is_bullet_passable = True
         pass
 
     def draw(self):
@@ -63,8 +71,20 @@ class WaterMapTile(MapTile):
     def __init__(self,  idx_x, idx_y, display):
         super().__init__(idx_x, idx_y, display)
         self.is_passable = False
+        self.is_bullet_passable = True
         pass
 
     def draw(self):
         pygame.draw.rect(self.display, (0, 0, 255), (self.pos_x, self.pos_y, self.SIZE_X, self.SIZE_Y))
+
+
+class WallMapTile(MapTile):
+    def __init__(self,  idx_x, idx_y, display):
+        super().__init__(idx_x, idx_y, display)
+        self.is_passable = False
+        self.is_bullet_passable = False
+        pass
+
+    def draw(self):
+        pygame.draw.rect(self.display, (128, 128, 128), (self.pos_x, self.pos_y, self.SIZE_X, self.SIZE_Y))
 

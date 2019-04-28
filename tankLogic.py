@@ -1,6 +1,8 @@
 from tank import TankState
 from tank import MoveDirection
 from random import choices
+from random import choice
+from tank import Tank
 
 
 class TankLogic:
@@ -22,6 +24,8 @@ class TankLogic:
 
             tank_choices_wages = ([80] + ([3] * (len(tank_choices) - 1)))
 
+            # Boost last direction
+
             next_move = choices(tank_choices, tank_choices_wages, k=1)
             if next_move == ['stay']:
                 return
@@ -36,14 +40,40 @@ class TankLogic:
         self.tank.update(dt)
 
 
+class EnemyTankLogic(TankLogic):
+    def __init__(self, tank, game_map):
+        super().__init__(tank, game_map)
+        self.next_shot_timeout = 0
+
+    def update(self, dt):
+        super().update(dt)
+
+        # Add shooting
+        self.next_shot_timeout -= dt
+        if self.next_shot_timeout < 0:
+            self.next_shot_timeout = choice([2, 3, 4, 5, 6])
+            self.tank.fire_bullet()
+
+
 class TankGroupManager:
-    def __init__(self):
+    def __init__(self, display, game_map, bullets_manager):
         self.tanks_logic = []
+        self.display = display
+        self.game_map = game_map
+        self.bullets_manager = bullets_manager
         pass
 
     def generate_tank(self):
         # create tank
-
+        new_tank = Tank(self.display, self.game_map.tile_size, self.bullets_manager)
         # create tank_logic and connect it with a tank
+        self.tanks_logic.append(EnemyTankLogic(new_tank, self.game_map))
         pass
-    
+
+    def update(self, dt):
+        for x in self.tanks_logic:
+            x.update(dt)
+
+    def draw(self):
+        for x in self.tanks_logic:
+            x.tank.draw()

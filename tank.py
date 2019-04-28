@@ -26,7 +26,7 @@ class TankDirection(Enum):
 
 
 class Tank:
-    def __init__(self, display, tile_size, bulletsManager):
+    def __init__(self, display, tile_size, bullets_manager):
         # Pixel position
         self.pos_x = 0
         self.pos_y = 0
@@ -51,7 +51,7 @@ class Tank:
         # Tank group, bullets can hit only tanks with another group
         self.group = 0
 
-        self.bulletsManager = bulletsManager
+        self.bullets_manager = bullets_manager
 
     def update(self, dt):
         dx = (self.destination_tile_x - self.tile_x) * self.move_speed * dt * self.tile_size
@@ -170,7 +170,7 @@ class Tank:
             TankDirection.RIGHT: BulletDirection.RIGHT
         }
 
-        self.bulletsManager.fire_bullet(
+        self.bullets_manager.fire_bullet(
             self.pos_x + (self.tile_size / 2),
             self.pos_y + (self.tile_size / 2),
             tank_dir_to_bullet_dir.get(self.direction))

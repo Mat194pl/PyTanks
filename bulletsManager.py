@@ -1,4 +1,6 @@
 import bullet
+from pygame.math import Vector2
+from pygame import Rect
 
 
 class BulletsManager:
@@ -19,7 +21,22 @@ class BulletsManager:
             x.update(dt * self.tile_size)
             if x.pos_x > self.game_map.width_px or x.pos_x < 0 or x.pos_y > self.game_map.height_px or x.pos_y < 0:
                 self.bullets.remove(x)
-
+            else:
+                # Check if bullet hits a wall or a tank
+                # Check for surrounding tiles
+                check_tiles = []
+                center_tile_pos = Vector2(
+                    (int)(x.pos_x / self.game_map.tile_size),
+                    (int)(x.pos_y / self.game_map.tile_size))
+                center_tile = self.game_map.get_tile(center_tile_pos.x, center_tile_pos.y)
+                check_tiles.append(self.game_map.get_tile(center_tile_pos.x, center_tile_pos.y))
+                bullet_rect = Rect(x.pos_x, x.pos_y, x.size, x.size)
+                for tile in check_tiles:
+                    if bullet_rect.colliderect(
+                            Rect(center_tile.pos_x, center_tile.pos_y, center_tile.SIZE_X, center_tile.SIZE_Y)):
+                        if not center_tile.is_bullet_passable:
+                            self.bullets.remove(x)
+                    pass
         pass
 
     def draw(self):
