@@ -18,6 +18,7 @@ class Bullet:
         self.direction = direction
         self.move_speed = 5
         self.size = self.tile_size / 8
+        self.damage_group = 0
         pass
 
     def update(self, dt):

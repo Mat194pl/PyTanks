@@ -1,8 +1,7 @@
-from tank import TankState
-from tank import MoveDirection
 from random import choices
 from random import choice
-from tank import Tank
+from tank import *
+import pygame
 
 
 class TankLogic:
@@ -55,17 +54,109 @@ class EnemyTankLogic(TankLogic):
             self.tank.fire_bullet()
 
 
+class PlayerTankLogic(TankLogic):
+    def __init__(self, tank, game_map):
+        super().__init__(tank, game_map)
+        self.is_key_up_hold = False
+        self.is_key_down_hold = False
+        self.is_key_left_hold = False
+        self.is_key_right_hold = False
+        tank.register_state_change_callback(self.tank_state_changed)
+        pass
+
+    def update(self, dt):
+        self.tank.update(dt)
+        pass
+
+    def tank_state_changed(self, tank_state):
+        if tank_state == TankState.IDLE:
+            if self.is_key_up_hold:
+                if self.game_map.is_tile_passable(self.tank.tile_x, self.tank.tile_y - 1):
+                    self.tank.move_cell(MoveDirection.MOVE_UP)
+            if self.is_key_down_hold:
+                if self.game_map.is_tile_passable(self.tank.tile_x, self.tank.tile_y + 1):
+                    self.tank.move_cell(MoveDirection.MOVE_DOWN)
+            if self.is_key_left_hold:
+                if self.game_map.is_tile_passable(self.tank.tile_x - 1, self.tank.tile_y):
+                    self.tank.move_cell(MoveDirection.MOVE_LEFT)
+            if self.is_key_right_hold:
+                if self.game_map.is_tile_passable(self.tank.tile_x + 1, self.tank.tile_y):
+                    self.tank.move_cell(MoveDirection.MOVE_RIGHT)
+
+    def process_input(self, input_event):
+        if input_event.key == pygame.K_DOWN:
+            if input_event.type == pygame.KEYDOWN:
+                self.set_key_hold(pygame.K_DOWN)
+                if self.game_map.is_tile_passable(self.tank.tile_x, self.tank.tile_y + 1):
+                    self.tank.move_cell(MoveDirection.MOVE_DOWN)
+                else:
+                    self.tank.set_direction(TankDirection.DOWN)
+            else:
+                self.is_key_down_hold = False
+
+        if input_event.key == pygame.K_UP:
+            if input_event.type == pygame.KEYDOWN:
+                self.set_key_hold(pygame.K_UP)
+                if self.game_map.is_tile_passable(self.tank.tile_x, self.tank.tile_y - 1):
+                    self.tank.move_cell(MoveDirection.MOVE_UP)
+                else:
+                    self.tank.set_direction(TankDirection.UP)
+            else:
+                self.is_key_up_hold = False
+
+        if input_event.key == pygame.K_LEFT:
+            if input_event.type == pygame.KEYDOWN:
+                self.set_key_hold(pygame.K_LEFT)
+                if self.game_map.is_tile_passable(self.tank.tile_x - 1, self.tank.tile_y):
+                    self.tank.move_cell(MoveDirection.MOVE_LEFT)
+                else:
+                    self.tank.set_direction(TankDirection.LEFT)
+            else:
+                self.is_key_left_hold = False
+
+        if input_event.key == pygame.K_RIGHT:
+            if input_event.type == pygame.KEYDOWN:
+                self.set_key_hold(pygame.K_RIGHT)
+                if self.game_map.is_tile_passable(self.tank.tile_x + 1, self.tank.tile_y):
+                    self.tank.move_cell(MoveDirection.MOVE_RIGHT)
+                else:
+                    self.tank.set_direction(TankDirection.RIGHT)
+            else:
+                self.is_key_right_hold = False
+
+        if input_event.key == pygame.K_SPACE and input_event.type == pygame.KEYDOWN:
+            self.tank.fire_bullet()
+
+    def set_key_hold(self, key):
+        self.is_key_up_hold = False
+        self.is_key_down_hold = False
+        self.is_key_left_hold = False
+        self.is_key_right_hold = False
+
+        if key == pygame.K_UP:
+            self.is_key_up_hold = True
+        if key == pygame.K_DOWN:
+            self.is_key_down_hold = True
+        if key == pygame.K_LEFT:
+            self.is_key_left_hold = True
+        if key == pygame.K_RIGHT:
+            self.is_key_right_hold = True
+
+
 class TankGroupManager:
-    def __init__(self, display, game_map, bullets_manager):
+    def __init__(self, display, game_map, bullets_manager, damage_group):
         self.tanks_logic = []
         self.display = display
         self.game_map = game_map
         self.bullets_manager = bullets_manager
+        self.damage_group = damage_group
+        self.bullets_manager.tanks_groups.append(self)
         pass
 
     def generate_tank(self):
         # create tank
         new_tank = Tank(self.display, self.game_map.tile_size, self.bullets_manager)
+        new_tank.damage_group = self.damage_group
         # create tank_logic and connect it with a tank
         self.tanks_logic.append(EnemyTankLogic(new_tank, self.game_map))
         pass
@@ -77,3 +168,6 @@ class TankGroupManager:
     def draw(self):
         for x in self.tanks_logic:
             x.tank.draw()
+
+    def do_damage(self, tank_logic, bullet):
+        pass
