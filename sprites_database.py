@@ -25,10 +25,11 @@ class SpriteDatabase:
 
         for key, value in sprites.items():
             if value['sprite_type'] == 'sprite':
-                SpriteDatabase.sprites[key] = Sprite()
+                spritesheet = SpriteDatabase.spritesheets.get(value['spritesheet'])
+                SpriteDatabase.sprites[key] = Sprite(spritesheet, value['frame_index'], value['sprite_rotation'])
             if value['sprite_type'] == 'animated_sprite':
                 spritesheet = SpriteDatabase.spritesheets.get(value['spritesheet'])
-                SpriteDatabase.sprites[key] = AnimatedSprite(spritesheet, value['frames'], value['frames_duration'])
+                SpriteDatabase.sprites[key] = AnimatedSprite(spritesheet, value['frames'], value['frames_duration'], value['sprite_rotation'])
 
         pass
 

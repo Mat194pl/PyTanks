@@ -1,4 +1,4 @@
-import pygame
+from pygame import *
 from map import Map
 from tank import TankDirection
 from bulletsManager import BulletsManager
@@ -7,6 +7,7 @@ from sprite import *
 from sprites_database import SpriteDatabase
 
 GAME_FPS = 60
+
 
 pygame.init()
 
@@ -33,11 +34,97 @@ spritesheets_dictionary = {
 }
 
 sprites_dictionary = {
-    "enemy_tank_1_up": {
+    "enemy_tank_1_moving_up": {
         "spritesheet": "enemy_tank_1",
         "sprite_type": "animated_sprite",
         "frames": [0, 1, 2],
-        "frames_duration": [0.100, 0.100, 0.100]}
+        "frames_duration": [0.100, 0.100, 0.100],
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_moving_down": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "animated_sprite",
+        "frames": [2, 1, 0],
+        "frames_duration": [0.100, 0.100, 0.100],
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_moving_left": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "animated_sprite",
+        "frames": [3, 4, 5],
+        "frames_duration": [0.100, 0.100, 0.100],
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_moving_right": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "animated_sprite",
+        "frames": [5, 4, 3],
+        "frames_duration": [0.100, 0.100, 0.100],
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_up": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "sprite",
+        "frame_index": 0,
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_down": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "sprite",
+        "frame_index": 0,
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_left": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "sprite",
+        "frame_index": 3,
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_right": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "sprite",
+        "frame_index": 3,
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_gun_up": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "animated_sprite",
+        "frames": [6, 7, 8, 9, 10, 11],
+        "frames_duration": [0.02, 0.02, 0.02, 0.02, 0.02, 0.100],
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_gun_down": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "animated_sprite",
+        "frames": [24, 25, 26, 27, 28, 29],
+        "frames_duration": [0.02, 0.02, 0.02, 0.02, 0.02, 0.100],
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_gun_left": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "animated_sprite",
+        "frames": [23, 22, 21, 20, 19, 18],
+        "frames_duration": [0.02, 0.02, 0.02, 0.02, 0.02, 0.100],
+        "sprite_rotation": 0
+    },
+
+    "enemy_tank_1_gun_right": {
+        "spritesheet": "enemy_tank_1",
+        "sprite_type": "animated_sprite",
+        "frames": [12, 13, 14, 15, 16, 17],
+        "frames_duration": [0.02, 0.02, 0.02, 0.02, 0.02, 0.100],
+        "sprite_rotation": 0
+    },
 }
 
 SpriteDatabase.initialize(spritesheets_dictionary, sprites_dictionary)
@@ -57,6 +144,30 @@ tank.set_tile_pos(2, 10)
 tank.damage_group = 2
 player_tank_logic = PlayerTankLogic(tank, gameMap)
 
+# test = load_image("PyTanks.png")
+# img = pygame.Surface((200, 200), pygame.SRCALPHA, 32)
+# img.convert_alpha()
+#
+# while True:
+#     pygame.display.update()
+#     gameMap.draw()
+#     display.blit(
+#         test,
+#         pygame.Rect(
+#             0,
+#             200,
+#             200,
+#             200))
+#     #img.blit(test, (0, 0), Rect(0, 0, 200, 200))
+#     display.blit(
+#         img,
+#         pygame.Rect(
+#             0,
+#             0,
+#             200,
+#             200)
+#     )
+#     pass
 
 while running:
     for event in pygame.event.get():

@@ -20,9 +20,11 @@ class SpriteSheet:
             for x in range(frames_x):
                 "Loads image from x,y,x+offset,y+offset"
                 rect = pygame.Rect(x * self.frame_width, y * self.frame_height, self.frame_width, self.frame_height)
-                image = pygame.Surface(rect.size).convert()
+                image = pygame.Surface(rect.size, pygame.SRCALPHA, 32)
                 image.blit(sheet, (0, 0), rect)
-                self.images.append(image)
+                scaled_image = pygame.Surface((50, 50), pygame.SRCALPHA, 32)
+                scaled_image.blit(pygame.transform.scale(image, (50, 50)), (0, 0), pygame.Rect(0, 0, 100, 100))
+                self.images.append(scaled_image)
                 pass
 
     def get_frame(self, index):
@@ -31,38 +33,73 @@ class SpriteSheet:
 
 
 class Sprite:
-    def __init__(self):
+    def __init__(self, sprite_sheet, frame_index, sprite_rotation=0):
+        self.sprite_sheet = sprite_sheet
+        self.frame_index = frame_index
+        self.sprite_rotation = sprite_rotation
         pass
 
     def update(self, dt):
         pass
 
-    def draw(self, position_x, position_y):
+    def draw(self, display, position_x, position_y):
+        frame_to_draw = self.sprite_sheet.get_frame(self.frame_index)
+        display.blit(
+            Sprite.rot_center(frame_to_draw, self.sprite_rotation),
+            pygame.Rect(
+                position_x,
+                position_y,
+                self.sprite_sheet.frame_width,
+                self.sprite_sheet.frame_height))
         pass
+
+    @staticmethod
+    def rot_center(image, angle):
+        """rotate an image while keeping its center and size"""
+        orig_rect = image.get_rect()
+        rot_image = pygame.transform.rotate(image, angle)
+        rot_rect = orig_rect.copy()
+        rot_rect.center = rot_image.get_rect().center
+        rot_image = rot_image.subsurface(rot_rect).copy()
+        return rot_image
 
 
 class AnimatedSprite(Sprite):
-    def __init__(self, sprite_sheet, frame_indices, frame_durations):
+    def __init__(self, sprite_sheet, frame_indices, frame_durations, sprite_rotation=0):
         self.frame_indices = frame_indices
         self.frame_durations = frame_durations
         self.sprite_sheet = sprite_sheet
         self.current_frame_idx = 0
         self.current_frame_duration = 0
+        self.sprite_rotation = sprite_rotation
+        self.is_playing = False
+        self.loop = False
+        pass
+
+    def play(self):
+        # Reset play
+        self.current_frame_duration = 0
+        self.current_frame_idx = 0
+        self.is_playing = True
         pass
 
     def update(self, dt):
-        self.current_frame_duration += dt
-        if self.current_frame_duration > self.frame_durations[self.current_frame_idx]:
-            self.current_frame_idx += 1
-            self.current_frame_duration = 0
-            if self.current_frame_idx >= len(self.frame_indices):
-                self.current_frame_idx = 0
-        pass
+        if self.is_playing:
+            self.current_frame_duration += dt
+            if self.current_frame_duration > self.frame_durations[self.current_frame_idx]:
+                self.current_frame_idx += 1
+                self.current_frame_duration = 0
+                if self.current_frame_idx >= len(self.frame_indices):
+                    self.current_frame_idx = 0
+                    self.current_frame_duration = 0
+                    if not self.loop:
+                        self.is_playing = False
+            pass
 
     def draw(self, display, position_x, position_y):
         frame_to_draw = self.sprite_sheet.get_frame(self.frame_indices[self.current_frame_idx])
         display.blit(
-            frame_to_draw,
+            Sprite.rot_center(frame_to_draw, self.sprite_rotation),
             pygame.Rect(
                 position_x,
                 position_y,
