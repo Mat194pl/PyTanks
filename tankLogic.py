@@ -29,12 +29,16 @@ class TankLogic:
             if next_move == ['stay']:
                 return
             if next_move == ['go_left']:
+                #self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "left")
                 self.tank.move_cell(MoveDirection.MOVE_LEFT)
             if next_move == ['go_right']:
+                #self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "right")
                 self.tank.move_cell(MoveDirection.MOVE_RIGHT)
             if next_move == ['go_up']:
+                #self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "up")
                 self.tank.move_cell(MoveDirection.MOVE_UP)
             if next_move == ['go_down']:
+                #self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "down")
                 self.tank.move_cell(MoveDirection.MOVE_DOWN)
         self.tank.update(dt)
 
@@ -43,6 +47,7 @@ class EnemyTankLogic(TankLogic):
     def __init__(self, tank, game_map):
         super().__init__(tank, game_map)
         self.next_shot_timeout = 0
+        tank.register_state_change_callback(self.tank_state_changed)
 
     def update(self, dt):
         super().update(dt)
@@ -52,6 +57,26 @@ class EnemyTankLogic(TankLogic):
         if self.next_shot_timeout < 0:
             self.next_shot_timeout = choice([2, 3, 4, 5, 6])
             self.tank.fire_bullet()
+
+    def tank_state_changed(self, tank_state):
+        if tank_state == TankState.IDLE:
+            if self.tank.direction == TankDirection.UP:
+                self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "down")
+            if self.tank.direction == TankDirection.DOWN:
+                self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "up")
+            if self.tank.direction == TankDirection.RIGHT:
+                self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "left")
+            if self.tank.direction == TankDirection.LEFT:
+                self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "right")
+
+        if tank_state == TankState.MOVING_UP:
+            self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "up")
+        if tank_state == TankState.MOVING_LEFT:
+            self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "left")
+        if tank_state == TankState.MOVING_RIGHT:
+            self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "right")
+        if tank_state == TankState.MOVING_DOWN:
+            self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "down")
 
 
 class PlayerTankLogic(TankLogic):
@@ -70,6 +95,15 @@ class PlayerTankLogic(TankLogic):
 
     def tank_state_changed(self, tank_state):
         if tank_state == TankState.IDLE:
+            if self.tank.direction == TankDirection.UP:
+                self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "down")
+            if self.tank.direction == TankDirection.DOWN:
+                self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "up")
+            if self.tank.direction == TankDirection.RIGHT:
+                self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "left")
+            if self.tank.direction == TankDirection.LEFT:
+                self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "right")
+
             if self.is_key_up_hold:
                 if self.game_map.is_tile_passable(self.tank.tile_x, self.tank.tile_y - 1):
                     self.tank.move_cell(MoveDirection.MOVE_UP)
@@ -82,6 +116,15 @@ class PlayerTankLogic(TankLogic):
             if self.is_key_right_hold:
                 if self.game_map.is_tile_passable(self.tank.tile_x + 1, self.tank.tile_y):
                     self.tank.move_cell(MoveDirection.MOVE_RIGHT)
+
+        if tank_state == TankState.MOVING_UP:
+            self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "up")
+        if tank_state == TankState.MOVING_LEFT:
+            self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "left")
+        if tank_state == TankState.MOVING_RIGHT:
+            self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "right")
+        if tank_state == TankState.MOVING_DOWN:
+            self.game_map.add_tank_track_to_tile(self.tank.tile_x, self.tank.tile_y, "down")
 
     def process_input(self, input_event):
         if input_event.key == pygame.K_DOWN:

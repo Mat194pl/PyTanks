@@ -34,6 +34,7 @@ class BulletsManager:
                 if not center_tile.is_bullet_passable:
                     self.bullets.remove(bullet_to_check)
                     is_destroyed = True
+                    center_tile.bullet_hit_callback()
                     break
         return is_destroyed
 

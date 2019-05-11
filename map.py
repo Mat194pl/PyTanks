@@ -43,12 +43,18 @@ class Map:
     def draw(self):
         for i in range(0, len(self.tiles)):
             self.tiles[i].draw()
+            self.tiles[i].draw_tank_track()
 
     def is_tile_passable(self, tile_x, tile_y):
         for tile in self.tiles:
             if tile.idx_x == tile_x and tile.idx_y == tile_y:
                 return tile.is_passable
         return False
+
+    def add_tank_track_to_tile(self, tile_x, tile_y, direction):
+        for tile in self.tiles:
+            if tile.idx_x == tile_x and tile.idx_y == tile_y:
+                tile.add_tank_track(direction)
 
     def get_tile(self, tile_x, tile_y):
         for tile in self.tiles:
