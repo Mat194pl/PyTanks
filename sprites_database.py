@@ -14,7 +14,9 @@ class SpriteDatabase:
     @staticmethod
     def initialize(spritesheets, sprites):
         for key, value in spritesheets.items():
-            SpriteDatabase.spritesheets[key] = SpriteSheet(value['file'], value['frames_x'], value['frames_y'])
+            SpriteDatabase.spritesheets[key] = \
+                SpriteSheet(
+                    value['file'], value['frames_x'], value['frames_y'], value['frame_width'], value['frame_height'])
 
         for key, value in sprites.items():
             if value['sprite_type'] == 'sprite':

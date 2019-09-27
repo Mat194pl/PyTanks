@@ -1,0 +1,8 @@
+.idea/misc.xml
+.idea/modules.xml
+.idea/PyTanks.iml
+.idea/workspace.xml
+.idea/inspectionProfiles/profiles_settings.xml
+__pycache__/
+1x/
+venv/

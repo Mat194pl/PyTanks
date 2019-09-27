@@ -1,6 +1,7 @@
 spritesheets_dictionary = {
-    "enemy_tank_1": {"file": "PyTanks.png", "frames_x": 6, "frames_y": 8},
-    "terrain": {"file": "PyTanksTerrain.png", "frames_x": 6, "frames_y": 6}
+    "enemy_tank_1": {"file": "PyTanks.png", "frames_x": 6, "frames_y": 8, "frame_width": 50, "frame_height": 50},
+    "terrain": {"file": "PyTanksTerrain.png", "frames_x": 6, "frames_y": 6, "frame_width": 50, "frame_height": 50},
+    "game_over": {"file": "GameOver.png", "frames_x": 1, "frames_y": 1, "frame_width": 300, "frame_height": 200}
 }
 
 sprites_dictionary = {
@@ -289,6 +290,13 @@ sprites_dictionary = {
         "spritesheet": "terrain",
         "sprite_type": "sprite",
         "frame_index": 30,
+        "sprite_rotation": 0
+    },
+
+    "game_over": {
+        "spritesheet": "game_over",
+        "sprite_type": "sprite",
+        "frame_index": 0,
         "sprite_rotation": 0
     }
 }

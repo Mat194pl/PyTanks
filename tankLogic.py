@@ -86,6 +86,7 @@ class PlayerTankLogic(TankLogic):
         self.is_key_down_hold = False
         self.is_key_left_hold = False
         self.is_key_right_hold = False
+        tank.health = 1
         tank.register_state_change_callback(self.tank_state_changed)
         pass
 
@@ -213,4 +214,8 @@ class TankGroupManager:
             x.tank.draw()
 
     def do_damage(self, tank_logic, bullet):
+        tank_logic.tank.health -= bullet.damage_value
+        if tank_logic.tank.health < 0.0:
+            # Remove tank
+            self.tanks_logic.remove(tank_logic)
         pass

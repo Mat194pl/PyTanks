@@ -9,7 +9,7 @@ class SpriteType(Enum):
 
 
 class SpriteSheet:
-    def __init__(self, file_path, frames_x, frames_y):
+    def __init__(self, file_path, frames_x, frames_y, frame_width=50, frame_height=50):
         sheet = load_image(file_path)
         self.images = []
         sheet_width = sheet.get_width()
@@ -22,8 +22,9 @@ class SpriteSheet:
                 rect = pygame.Rect(x * self.frame_width, y * self.frame_height, self.frame_width, self.frame_height)
                 image = pygame.Surface(rect.size, pygame.SRCALPHA, 32)
                 image.blit(sheet, (0, 0), rect)
-                scaled_image = pygame.Surface((50, 50), pygame.SRCALPHA, 32)
-                scaled_image.blit(pygame.transform.scale(image, (50, 50)), (0, 0), pygame.Rect(0, 0, 100, 100))
+                scaled_image = pygame.Surface((frame_width, frame_height), pygame.SRCALPHA, 32)
+                scaled_image.blit(pygame.transform.scale(
+                    image, (frame_width, frame_height)), (0, 0), pygame.Rect(0, 0, frame_width * 2, frame_height * 2))
                 self.images.append(scaled_image)
                 pass
 

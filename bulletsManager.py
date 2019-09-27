@@ -10,6 +10,7 @@ class BulletsManager:
         self.bullets = []
         self.game_map = game_map
         self.tanks_groups = []
+        self.is_player_dead = False
 
     def fire_bullet(self, pos_x, pos_y, direction: bullet.BulletDirection, damage_group):
         new_bullet = bullet.Bullet(self.display, self.tile_size, direction, pos_x, pos_y)
@@ -53,10 +54,25 @@ class BulletsManager:
                     tank_logic_to_check.tank.size_y)
 
                 if tank_rect.colliderect(bullet_rect):
-                    tank_group.do_damage(tank_logic_to_check, bullet)
+                    tank_group.do_damage(tank_logic_to_check, bullet_to_check)
                     self.bullets.remove(bullet_to_check)
                     return True
         return False
+
+    def check_player_collision(self, player_tank_logic):
+        for x in self.bullets:
+            if x.damage_group == player_tank_logic.tank.damage_group:
+                continue
+            bullet_rect = Rect(x.pos_x, x.pos_y, x.size, x.size)
+            tank_rect = Rect(
+                player_tank_logic.tank.pos_x,
+                player_tank_logic.tank.pos_y,
+                player_tank_logic.tank.size_x,
+                player_tank_logic.tank.size_y)
+
+            if tank_rect.colliderect(bullet_rect):
+                player_tank_logic.tank.health -= x.damage_value
+        pass
 
     def update(self, dt):
         for x in self.bullets:

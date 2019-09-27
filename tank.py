@@ -1,6 +1,7 @@
 from enum import Enum
 from bullet import BulletDirection
 from sprites_database import SpriteDatabase
+from particlesGenerator import ParticlesGenerator
 import sprites_database
 import pygame
 
@@ -53,6 +54,7 @@ class Tank:
 
         # Tank group, bullets can hit only tanks with another group
         self.damage_group = 0
+        self.health = 100.0
 
         self.bullets_manager = bullets_manager
         self.state_changed_callback = None
@@ -196,12 +198,28 @@ class Tank:
             self.damage_group)
 
         if self.direction == TankDirection.UP:
+            ParticlesGenerator.add_gun_smoke(
+                self.pos_x + (self.size_x / 2),
+                self.pos_y,
+                pygame.Vector2(0, -10))
             self.sprites['gun_up'].play()
         if self.direction == TankDirection.DOWN:
+            ParticlesGenerator.add_gun_smoke(
+                self.pos_x + (self.size_x / 2),
+                self.pos_y + self.size_y,
+                pygame.Vector2(0, 10))
             self.sprites['gun_down'].play()
         if self.direction == TankDirection.LEFT:
+            ParticlesGenerator.add_gun_smoke(
+                self.pos_x,
+                self.pos_y + (self.size_y / 2),
+                pygame.Vector2(-10, 0))
             self.sprites['gun_left'].play()
         if self.direction == TankDirection.RIGHT:
+            ParticlesGenerator.add_gun_smoke(
+                self.pos_x + self.size_x,
+                self.pos_y + (self.size_y / 2),
+                pygame.Vector2(10, 0))
             self.sprites['gun_right'].play()
 
     def register_state_change_callback(self, callback):
